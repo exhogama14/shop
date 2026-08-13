@@ -1,0 +1,19 @@
+{% extends "layout.html" %}
+{% block content %}
+{% if products %}
+    <div class="product-grid">
+        {% for p in products %}
+        <div class="product-card">
+            <a href="/product/{{ p.id }}" style="text-decoration:none; color:inherit;">
+                {% if p.image %}<img src="/static/images/{{ p.image }}" alt="{{ p.name }}" class="product-image">{% else %}<div class="product-image" style="display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:40px;">💎</div>{% endif %}
+                <div class="product-info"><div class="product-name">{{ p.name }}</div><div class="product-price">${{ "%.2f"|format(p.price) }}</div></div>
+            </a>
+            <div class="product-actions">
+                <form method="post" action="/cart/add/{{ p.id }}"><button type="submit" class="btn" style="flex:1;">Add to Cart</button></form>
+                <a href="/product/{{ p.id }}" class="btn" style="flex:1; background:#f3f4f6; color:var(--text); border:1px solid var(--border);">View</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}<p style="text-align:center; padding:50px; color:#9ca3af;">No products found.</p>{% endif %}
+{% endblock %}

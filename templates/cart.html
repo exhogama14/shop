@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block content %}
+<h2 style="margin-bottom: 20px; font-weight: 700;">Your Shopping Cart</h2>
+{% if cart_items %}
+    <div style="background: var(--white); border-radius: 12px; padding: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <table style="width: 100%; border-collapse: collapse;">
+            <thead><tr style="border-bottom: 2px solid var(--border); color: #6b7280; font-size: 14px; font-weight: 600;">
+                <th style="text-align:left; padding:10px;">Product</th>
+                <th style="text-align:center; padding:10px;">Price</th>
+                <th style="text-align:center; padding:10px;">Qty</th>
+                <th style="text-align:right; padding:10px;">Subtotal</th>
+                <th style="text-align:center; padding:10px;">Action</th>
+            </tr></thead>
+            <tbody>
+                {% for item in cart_items %}
+                <tr style="border-bottom: 1px solid var(--border);">
+                    <td style="padding:15px;"><div style="display:flex; align-items:center; gap:15px;">
+                        {% if item.product.image %}<img src="/static/images/{{ item.product.image }}" style="width:60px; height:60px; object-fit:cover; border-radius:6px; border:1px solid var(--border);">{% else %}<div style="width:60px; height:60px; background:#f3f4f6; border-radius:6px; display:flex; align-items:center; justify-content:center;">💎</div>{% endif %}
+                        <span style="font-weight:600; color:var(--primary);">{{ item.product.name }}</span></div></td>
+                    <td style="text-align:center; padding:15px; color:#6b7280;">${{ "%.2f"|format(item.product.price) }}</td>
+                    <td style="text-align:center; padding:15px; font-weight:500;">{{ item.quantity }}</td>
+                    <td style="text-align:right; padding:15px; font-weight:700;">${{ "%.2f"|format(item.product.price * item.quantity) }}</td>
+                    <td style="text-align:center; padding:15px;"><form method="post" action="/cart/remove/{{ item.product.id }}"><button class="btn btn-sm" style="background:#fee2e2; color:#ef4444; border:none;">Remove</button></form></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div style="margin-top: 25px; text-align: right; border-top: 2px solid var(--border); padding-top: 20px;">
+            <div style="font-size: 18px; margin-bottom: 15px;"><span style="color:#6b7280;">Total: </span><strong style="font-size: 24px; color:var(--primary);">${{ "%.2f"|format(total) }}</strong></div>
+            <a href="/checkout" class="btn btn-success" style="padding: 14px 30px; font-size: 16px;">Proceed to Secure Checkout →</a>
+        </div>
+    </div>
+{% else %}
+    <div style="text-align:center; padding: 80px 20px; background: var(--white); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+        <h3 style="color:var(--primary); margin-bottom: 10px;">Your cart is empty</h3>
+        <p style="color:#6b7280; margin-bottom: 20px;">Looks like you haven't added any diamonds yet.</p>
+        <a href="/" class="btn">Continue Shopping</a>
+    </div>
+{% endif %}
+{% endblock %}
