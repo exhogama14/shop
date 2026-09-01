@@ -1,9 +1,9 @@
 ﻿"""
-WSGI Entry Point for Gunicorn / Production Servers
+WSGI Entry Point for Gunicorn, Hypercorn, and Production Servers
 ---------------------------------------------------
 This module exposes the Flask application instance as `app`.
 It is the standard entry point for production WSGI servers
-(Gunicorn, uWSGI, mod_wsgi, Waitress, etc.).
+(Gunicorn, Hypercorn, uWSGI, mod_wsgi, etc.).
 
 Usage with Gunicorn:
     gunicorn -c gunicorn_config.py wsgi:app

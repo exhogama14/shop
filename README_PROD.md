@@ -1,6 +1,6 @@
 ﻿# DiamondStore — Production Deployment Guide
 
-This document explains how to run DiamondStore with **Gunicorn** (the production-grade WSGI server) instead of Flask's built-in development server.
+This document explains how to run DiamondStore with a production WSGI server instead of Flask's built-in development server. Gunicorn is used on Linux; Hypercorn is used on Windows.
 
 The Flask dev server (`flask run` / `app.run()`) is great for hacking on the project but **must not** be used in production — it is single-threaded, doesn't scale, lacks robust logging, and is not hardened.
 
@@ -25,7 +25,7 @@ venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-This installs Flask, Flask-SQLAlchemy, Flask-Login, Werkzeug, and **Gunicorn**.
+This installs Flask, Flask-SQLAlchemy, Flask-Login, Werkzeug, Gunicorn, and Hypercorn.
 
 ## 3. Configure Environment (REQUIRED in production)
 
@@ -57,7 +57,7 @@ gunicorn -c gunicorn_config.py wsgi:app
 ### Or use the helper script
 ```bash
 ./start.sh         # Linux / macOS
-start.bat          # Windows (falls back to Waitress, see below)
+start.bat          # Windows (Hypercorn)
 ```
 
 You should see:
@@ -92,19 +92,21 @@ server {
 }
 ```
 
-## 6. Windows Note
+## 6. Windows
 
-Gunicorn does not support Windows natively. On Windows you have two options:
+Gunicorn does not support Windows natively. Hypercorn supports this WSGI app on Windows:
 
-**A. Use Waitress** (recommended on Windows):
-```bash
-pip install waitress
-waitress-serve --listen=0.0.0.0:8000 wsgi:app
+```powershell
+python -m hypercorn wsgi:app --bind=0.0.0.0:8000 --workers=2 --log-level=info --access-logfile=- --error-logfile=-
 ```
 
-**B. Run on WSL** (Windows Subsystem for Linux) and use Gunicorn normally.
+Or use the helper script:
 
-The included `start.bat` auto-detects and falls back to Waitress.
+```cmd
+start.bat
+```
+
+WSL is another option if you specifically want to run Gunicorn on Windows.
 
 ## 7. Systemd Service (Linux servers)
 
@@ -141,7 +143,7 @@ sudo systemctl status diamondstore
 | `gunicorn_config.py`  | Production config (workers, timeouts, logging)  |
 | `requirements.txt`    | Pinned dependencies including `gunicorn`       |
 | `start.sh`            | Convenience launcher (Unix)                    |
-| `start.bat`           | Convenience launcher (Windows; uses Waitress)  |
+| `start.bat`           | Convenience launcher (Windows; uses Hypercorn)  |
 | `Procfile`            | PaaS declaration (Heroku / Render / Fly.io)    |
 | `app.py`              | **Unchanged** — still works with `python app.py` for local dev |
 

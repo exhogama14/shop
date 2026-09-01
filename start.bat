@@ -6,23 +6,22 @@ setlocal
 cd /d "%~dp0"
 
 if not defined PORT set PORT=8000
+if not defined WEB_CONCURRENCY set WEB_CONCURRENCY=2
+if not defined LOG_LEVEL set LOG_LEVEL=info
 set BIND=0.0.0.0:%PORT%
 
-echo ?? Starting DiamondStore (production mode)
+echo Starting DiamondStore (production mode)
 echo    -^> bind:      %BIND%
 echo    -^> workers:   %WEB_CONCURRENCY%
 echo    -^> log level: %LOG_LEVEL%
 
-REM gunicorn does not run natively on Windows; use waitress instead.
-REM Install with: pip install waitress
-where gunicorn >nul 2>nul
-if %ERRORLEVEL% EQU 0 (
-    gunicorn -c gunicorn_config.py wsgi:app
-) else (
+REM Hypercorn supports WSGI applications and runs natively on Windows.
+python -m hypercorn wsgi:app --bind=%BIND% --workers=%WEB_CONCURRENCY% --log-level=%LOG_LEVEL% --access-logfile=- --error-logfile=-
+if errorlevel 1 (
     echo.
-    echo [INFO] Gunicorn is Unix-only. Falling back to Waitress on Windows.
-    echo        pip install waitress  (one-time)
-    python -m waitress --listen=%BIND% wsgi:app
+    echo [ERROR] Hypercorn could not start.
+    echo         Run: pip install -r requirements.txt
+    exit /b 1
 )
 
 endlocal

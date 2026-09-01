@@ -10,7 +10,11 @@ if (Test-Path $venvPath) {
     exit 1
 }
 
-Write-Host "Starting Waitress server..." -ForegroundColor Cyan
+Write-Host "Starting Hypercorn server..." -ForegroundColor Cyan
 
-waitress-serve --host=0.0.0.0 --port=8080 app:app
+$port = if ($env:PORT) { $env:PORT } else { "8080" }
+$workers = if ($env:WEB_CONCURRENCY) { $env:WEB_CONCURRENCY } else { "2" }
+$logLevel = if ($env:LOG_LEVEL) { $env:LOG_LEVEL } else { "info" }
+
+python -m hypercorn wsgi:app --bind="0.0.0.0:$port" --workers=$workers --log-level=$logLevel --access-logfile=- --error-logfile=-
 

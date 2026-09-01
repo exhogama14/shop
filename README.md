@@ -7,7 +7,7 @@ DiamondStore is a Python Flask storefront with a shopping cart, checkout form, u
 - Frontend: Flask templates + static CSS/JS
 - Backend: Flask + SQLAlchemy + Flask-Login
 - Database: SQLite by default
-- Run mode: local development via Flask or production via Waitress/Gunicorn
+- Run mode: local development via Flask or production via Hypercorn/Gunicorn
 
 ## Requirements
 
@@ -70,10 +70,10 @@ This project includes a production-ready WSGI entry point in `wsgi.py` and confi
 gunicorn -c gunicorn_config.py wsgi:app
 ```
 
-### With Waitress on Windows
+### With Hypercorn on Windows
 
 ```bash
-waitress-serve --listen=0.0.0.0:8000 wsgi:app
+python -m hypercorn wsgi:app --bind=0.0.0.0:8000 --workers=2
 ```
 
 ## Important app behavior
