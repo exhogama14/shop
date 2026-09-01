@@ -1,5 +1,47 @@
 {% extends "layout.html" %}
+{% block title %}Contact{% endblock %}
 {% block content %}
-<div style="max-width: 600px; margin: 0 auto;"><h2 style="margin-bottom: 20px; color: var(--primary);">Contact Us</h2>
-<div style="background: var(--white); padding: 30px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);"><form method="post" action="/contact"><div class="form-group"><label>Name</label><input type="text" name="name" required></div><div class="form-group"><label>Email</label><input type="email" name="email" required></div><div class="form-group"><label>Message</label><textarea name="message" rows="5" required></textarea></div><button type="submit" class="btn" style="width: 100%;">Send Message</button></form></div></div>
+
+<div class="contact-wrap">
+    <div class="contact-info">
+        <h2>Contact</h2>
+        <p>Questions, custom orders, or anything else — get in touch.</p>
+        <div class="form-group">
+            <label>Address</label>
+            <p style="color:var(--text); font-size:14px;">1 Diamond Plaza, New York, NY</p>
+        </div>
+        <div class="form-group">
+            <label>Email</label>
+            <p style="color:var(--text); font-size:14px;">hello@diamondstore.com</p>
+        </div>
+        <div class="form-group">
+            <label>Phone</label>
+            <p style="color:var(--text); font-size:14px;">+1 (800) 555-DIAMOND</p>
+        </div>
+        <div class="form-group" style="margin-bottom:0;">
+            <label>Hours</label>
+            <p style="color:var(--text); font-size:14px;">Mon – Sat · 10:00 – 19:00</p>
+        </div>
+    </div>
+    <div class="contact-form-card">
+        <h2 style="margin-bottom: 6px; font-size:20px;">Send a Message</h2>
+        <p style="color: var(--text-mid); font-size: 14px; margin-bottom: 20px;">We typically respond within 24 hours.</p>
+        <form method="post" action="/contact">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" name="name" required>
+            </div>
+            <div class="form-group">
+                <label>Email</label>
+                <input type="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label>Message</label>
+                <textarea name="message" rows="6" required placeholder="Tell us how we can help..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-block">Send Message</button>
+        </form>
+    </div>
+</div>
+
 {% endblock %}

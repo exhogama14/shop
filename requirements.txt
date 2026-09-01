@@ -1,0 +1,21 @@
+﻿# DiamondStore — Production Dependencies
+# Install:  pip install -r requirements.txt
+#
+# These versions are pinned for reproducible production builds.
+# Bump deliberately; do not float.
+
+# --- Web framework ---
+Flask==3.0.3
+
+# --- Database / ORM ---
+Flask-SQLAlchemy==3.1.1
+SQLAlchemy==2.0.36
+
+# --- Authentication ---
+Flask-Login==0.6.3
+
+# --- WSGI utilities ---
+Werkzeug==3.0.6
+
+# --- Production WSGI server ---
+gunicorn==26.0.0

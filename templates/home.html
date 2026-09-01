@@ -1,19 +1,70 @@
 {% extends "layout.html" %}
+{% block title %}Shop{% endblock %}
 {% block content %}
+
 {% if products %}
     <div class="product-grid">
         {% for p in products %}
         <div class="product-card">
-            <a href="/product/{{ p.id }}" style="text-decoration:none; color:inherit;">
-                {% if p.image %}<img src="/static/images/{{ p.image }}" alt="{{ p.name }}" class="product-image">{% else %}<div class="product-image" style="display:flex; align-items:center; justify-content:center; color:#9ca3af; font-size:40px;">💎</div>{% endif %}
-                <div class="product-info"><div class="product-name">{{ p.name }}</div><div class="product-price">${{ "%.2f"|format(p.price) }}</div></div>
+            <a href="/product/{{ p.id }}" class="card-link">
+                {% if p.image %}
+                    <div class="product-image-wrap">
+                        <img src="/static/images/{{ p.image }}" alt="{{ p.name }}" class="product-image" loading="lazy">
+                    </div>
+                {% else %}
+                    <div class="product-image-wrap">
+                        <div class="product-image-placeholder">📦</div>
+                    </div>
+                {% endif %}
+                <div class="product-info">
+                    <div class="product-name">{{ p.name }}</div>
+                    <div class="product-price">${{ "%.2f"|format(p.price) }}</div>
+                </div>
             </a>
             <div class="product-actions">
-                <form method="post" action="/cart/add/{{ p.id }}"><button type="submit" class="btn" style="flex:1;">Add to Cart</button></form>
-                <a href="/product/{{ p.id }}" class="btn" style="flex:1; background:#f3f4f6; color:var(--text); border:1px solid var(--border);">View</a>
+                <form method="post" action="/cart/add/{{ p.id }}">
+                    <button type="submit" class="btn">Add to Cart</button>
+                </form>
+                <a href="/product/{{ p.id }}" class="btn">View</a>
             </div>
         </div>
         {% endfor %}
     </div>
-{% else %}<p style="text-align:center; padding:50px; color:#9ca3af;">No products found.</p>{% endif %}
+
+    {% if total_pages > 1 %}
+    <nav class="pagination" aria-label="Pagination">
+        <a href="?page={{ page - 1 }}" class="{% if page == 1 %}is-disabled{% endif %}" aria-label="Previous">‹ Prev</a>
+
+        {# Always show first page #}
+        {% if page > 3 %}
+            <a href="?page=1">1</a>
+            <span class="ellipsis">…</span>
+        {% endif %}
+
+        {# Pages around current #}
+        {% for n in range(max(1, page - 1), min(total_pages + 1, page + 2)) %}
+            {% if n == page %}
+                <span class="is-current">{{ n }}</span>
+            {% else %}
+                <a href="?page={{ n }}">{{ n }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {# Always show last page #}
+        {% if page < total_pages - 2 %}
+            <span class="ellipsis">…</span>
+            <a href="?page={{ total_pages }}">{{ total_pages }}</a>
+        {% endif %}
+
+        <a href="?page={{ page + 1 }}" class="{% if page == total_pages %}is-disabled{% endif %}" aria-label="Next">Next ›</a>
+    </nav>
+    {% endif %}
+
+{% else %}
+    <div class="empty-state">
+        <p>No products yet.</p>
+        <a href="/" class="btn">Refresh</a>
+    </div>
+{% endif %}
+
 {% endblock %}

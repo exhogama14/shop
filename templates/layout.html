@@ -2,79 +2,62 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}DiamondStore{% endblock %}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root { --primary: #111827; --accent: #3b82f6; --bg: #f9fafb; --white: #ffffff; --border: #e5e7eb; --text: #374151; --success: #10b981; }
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; display: flex; flex-direction: column; }
-        .top-bar { background: var(--white); border-bottom: 1px solid var(--border); padding: 15px 0; position: sticky; top: 0; z-index: 100; }
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 20px; }
-        .nav-wrapper { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 22px; font-weight: 800; color: var(--primary); text-decoration: none; letter-spacing: -0.5px; }
-        .nav-links { display: flex; gap: 20px; align-items: center; }
-        .nav-link { text-decoration: none; color: var(--text); font-weight: 500; font-size: 14px; }
-        .nav-link:hover { color: var(--accent); }
-        .btn { background: var(--primary); color: white; padding: 10px 20px; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-block; font-size: 14px; transition: 0.2s; }
-        .btn:hover { opacity: 0.9; }
-        .btn-sm { padding: 6px 12px; font-size: 12px; }
-        .btn-success { background: var(--success); }
-        .flash-messages { margin: 20px auto; max-width: 1200px; padding: 0 20px; }
-        .flash { padding: 12px 16px; border-radius: 6px; margin-bottom: 10px; font-size: 14px; background: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe; }
-        .main-content { flex: 1; padding: 40px 0; }
-        footer { background: var(--white); border-top: 1px solid var(--border); padding: 30px 0; text-align: center; color: #9ca3af; font-size: 14px; margin-top: auto; }
-        .form-group { margin-bottom: 20px; }
-        .form-group label { display: block; margin-bottom: 8px; font-weight: 500; font-size: 14px; color: #4b5563; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 6px; font-size: 14px; background: var(--white); transition: border-color 0.2s; }
-        .form-group input:focus, .form-group textarea:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
-        .product-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
-        @media (max-width: 1024px) { .product-grid { grid-template-columns: repeat(3, 1fr); } }
-        @media (max-width: 768px) { .product-grid { grid-template-columns: repeat(2, 1fr); } }
-        .product-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; transition: all 0.3s; display: flex; flex-direction: column; }
-        .product-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
-        .product-image { width: 100%; height: 220px; object-fit: cover; background: #f3f4f6; }
-        .product-info { padding: 16px; flex-grow: 1; }
-        .product-name { font-size: 15px; font-weight: 600; margin-bottom: 6px; color: var(--primary); }
-        .product-price { font-size: 16px; font-weight: 700; color: var(--accent); margin-bottom: 12px; }
-        .product-actions { padding: 0 16px 16px; display: flex; gap: 10px; }
-        .admin-table { width: 100%; border-collapse: collapse; background: var(--white); border-radius: 8px; overflow: hidden; border: 1px solid var(--border); }
-        .admin-table th, .admin-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
-        .admin-table th { background: #f9fafb; font-weight: 600; color: #6b7280; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#0f172a">
+    <title>{% block title %}Store{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="top-bar">
+    <header class="top-bar">
         <div class="container nav-wrapper">
-            <a href="/" class="logo">💎 DiamondStore</a>
-            <div class="nav-links">
-                <a href="/" class="nav-link">Shop</a>
-                <a href="/contact" class="nav-link">Contact</a>
+            <a href="/" class="logo" aria-label="Home"></a>
+
+            <button class="nav-toggle" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="primary-nav">
+                <span></span><span></span><span></span>
+            </button>
+
+            <div class="nav-links" id="primary-nav">
+                <a href="/" class="nav-link {% if request.path == '/' %}is-active{% endif %}">Home</a>
                 {% if current_user.is_authenticated %}
                     <a href="/cart" class="nav-link">Cart ({{ session.get('cart', []).__len__() }})</a>
-                    {% if current_user.is_admin %}<a href="/admin" class="nav-link" style="color: var(--accent);">Admin</a>{% endif %}
-                    <a href="/logout" class="btn btn-sm">Log Out</a>
+                    {% if current_user.is_admin %}<a href="/admin" class="nav-link nav-admin">Admin</a>{% endif %}
+                    <a href="/logout" class="btn">Log Out</a>
                 {% else %}
-                    <a href="/login" class="btn btn-sm">Log In</a>
+                    <a href="/login" class="btn">Log In</a>
+                    <a href="/register" class="btn">Create Account</a>
                     <a href="/cart" class="nav-link">Cart</a>
                 {% endif %}
             </div>
         </div>
-    </div>
+    </header>
+
     <div class="flash-messages">
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="flash">{{ message }}</div>
+                    <div class="flash flash-{{ category }}">{{ message }}</div>
                 {% endfor %}
             {% endif %}
         {% endwith %}
     </div>
-    <div class="main-content">
+
+    <main class="main-content">
         <div class="container">
             {% block content %}{% endblock %}
         </div>
-    </div>
-    <footer><div class="container"><p>&copy; 2026 DiamondStore. All rights reserved.</p></div></footer>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container">
+            &copy; 2024 Store
+        </div>
+    </footer>
+
+    <button class="scroll-top" type="button" aria-label="Scroll to top" title="Scroll to top">&#8593;</button>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

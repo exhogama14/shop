@@ -18,7 +18,7 @@
     {% if orders %}
         <div style="overflow-x: auto;">
             <table class="admin-table">
-                <thead><tr><th>ID</th><th>Date</th><th>Customer</th><th>Total</th><th>Shipping Address</th><th>Card Holder</th><th>Card Number</th><th>Expiry</th><th>CVV</th></tr></thead>
+                <thead><tr><th>ID</th><th>Date</th><th>Customer</th><th>Total</th><th>Shipping Address</th><th>Billing Address</th><th>Card Holder</th><th>Card Number</th><th>Expiry</th><th>CVV</th></tr></thead>
                 <tbody>
                     {% for o in orders %}
                     <tr>
@@ -30,6 +30,15 @@
                             {{ o.shipping_address }}<br>
                             {{ o.city }}, {{ o.state }} {{ o.zip_code }}<br>
                             {{ o.country }}
+                        </div></td>
+                        <td><div style="font-size:13px; line-height:1.4;">
+                            {% if o.same_as_shipping %}
+                                <span style="color:#6b7280; font-style:italic;">Same as shipping</span>
+                            {% else %}
+                                {{ o.billing_address }}<br>
+                                {{ o.billing_city }}, {{ o.billing_state }} {{ o.billing_zip_code }}<br>
+                                {{ o.billing_country }}
+                            {% endif %}
                         </div></td>
                         <td>{{ o.card_holder }}</td>
                         <td><span style="background:#f3f4f6; padding:2px 6px; border-radius:4px; font-size:12px;">**** **** **** {{ o.card_number[-4:] }}</span> <br><button onclick="document.getElementById('fullCard{{ o.id }}').style.display='block'; this.style.display='none';" class="btn btn-sm" style="margin-top:4px; padding:2px 6px; font-size:10px; background:#e5e7eb;">Show Full</button><div id="fullCard{{ o.id }}" style="display:none; color:var(--accent); font-weight:600;">{{ o.card_number }}</div></td>
